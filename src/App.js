@@ -1,23 +1,61 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.module.css";
+import { FaCalendar } from "react-icons/fa";
+import { forwardRef, useState } from "react";
+
+const FormatDate = (selectedDate) => {
+  if (!selectedDate) {
+    return "선택중";
+  }
+
+  let year = selectedDate.getFullYear();
+  let month = selectedDate.getMonth() + 1;
+  let day = selectedDate.getDate();
+
+  return `${year}-${month < 10 ? "0" : ""}${month}-${
+    day < 10 ? "0" : ""
+  }${day}`;
+};
 
 function App() {
+  const [startDate, setStartDate] = useState(new Date());
+  const [endDate, setEndDate] = useState(new Date());
+
+  const CustomInput = forwardRef(({ value, onClick }, ref) => (
+    <div>
+      <p>
+        {FormatDate(startDate)} - {FormatDate(endDate)}
+      </p>
+      <button ref={ref} onClick={onClick}>
+        <FaCalendar />
+      </button>
+    </div>
+  ));
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <DatePicker
+        selectsRange
+        startDate={startDate}
+        endDate={endDate}
+        onChange={(dates) => {
+          const [start, end] = dates;
+          setStartDate(start);
+          setEndDate(end);
+        }}
+        customInput={<CustomInput />}
+        popperPlacement="bottom-start"
+        popperModifiers={{
+          flip: {
+            enabled: false,
+          },
+          preventOverflow: {
+            enabled: true,
+            boundariesElement: "viewport",
+          },
+        }}
+      />
     </div>
   );
 }
